@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import tokenService from '../service/Token.service'
+import ApiError from '../exceptions/api.error'
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {

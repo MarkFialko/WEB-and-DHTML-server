@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
 import router from './routes/index'
-import errorMiddleware from './middlewares/ErrorMiddleware'
+import errorMiddleware from './middlewares/error.middleware'
 
 dotenv.config()
 
