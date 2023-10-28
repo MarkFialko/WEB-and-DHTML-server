@@ -1,8 +1,9 @@
 import express, { Express } from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser'
 import router from './routes/index'
+import errorMiddleware from './middlewares/ErrorMiddleware'
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ app.use(express.json())
 // to parse cookie
 app.use(cookieParser())
 app.use('/api', router)
+app.use(errorMiddleware)
 
 const start = async () => {
   try {

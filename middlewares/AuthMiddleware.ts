@@ -5,27 +5,27 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
     const authorizationHeader = req.headers.authorization
     if (!authorizationHeader) {
-      return next(new Error('Not authorized'))
+      return next(ApiError.UnauthorizedError())
     }
 
     // Bearer <accessToken>
     const accessToken = authorizationHeader.split(' ')[1]
 
     if (!accessToken) {
-      return next(new Error('Not authorized'))
+      return next(ApiError.UnauthorizedError())
     }
 
     const userData = tokenService.validateAccessToken(accessToken)
 
     if (!userData) {
-      return next(new Error('Not authorized'))
+      return next(ApiError.UnauthorizedError())
     }
 
     req.user = userData
     next()
 
   } catch (e) {
-      return next(new Error('Exception'))
+    return next(ApiError.UnauthorizedError())
   }
 
 }

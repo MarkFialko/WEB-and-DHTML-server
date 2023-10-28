@@ -4,9 +4,9 @@ import bcrypt from 'bcryptjs'
 import { HydratedDocument } from 'mongoose'
 import { UserDto } from '../dtos/User.dto'
 import TokenService from './Token.service'
+import ApiError from '../exceptions/api.error'
 
-// TODO take out user token logic, add error handler
-
+// TODO take out user token logic
 
 class UserService {
   async registration(email: string, password: string) {
@@ -15,7 +15,7 @@ class UserService {
     })
 
     if (candidate) {
-      throw new Error(`User with email: ${email} already exist`)
+      throw ApiError.BadRequest(`User with email: ${email} already exist`)
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -44,13 +44,13 @@ class UserService {
     })
 
     if (!user) {
-      throw new Error(`User with this email: ${email} not found`)
+      throw ApiError.BadRequest(`User with this email: ${email} not found`)
     }
 
     const isPassEquals = await bcrypt.compare(password, user.password)
 
     if (!isPassEquals) {
-      throw new Error(`Incorrect email or password`)
+      throw ApiError.BadRequest(`Incorrect email or password`)
     }
 
     const userDto = new UserDto(user)
@@ -66,14 +66,14 @@ class UserService {
 
   async refresh(refreshToken: string) {
     if (!refreshToken) {
-      throw new Error('Not authorized')
+      throw ApiError.UnauthorizedError()
     }
 
 
     const userData = TokenService.validateRefreshToken(refreshToken)
     const tokenFromDB = await TokenService.findToken(refreshToken)
     if (!userData || !tokenFromDB) {
-      throw new Error('Not authorized')
+      throw ApiError.UnauthorizedError()
     }
 
     const user = await UserModel.findById(userData.id)

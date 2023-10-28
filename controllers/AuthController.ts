@@ -1,8 +1,8 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import UserService from '../service/User.service'
 
 class AuthController {
-  async registration(req: Request, res: Response) {
+  async registration(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body
 
@@ -14,10 +14,12 @@ class AuthController {
       })
 
       return res.json(userData)
-    } catch (e) {}
+    } catch (e) {
+      next(e)
+    }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body
 
@@ -28,10 +30,12 @@ class AuthController {
       })
 
       return res.json(userData)
-    } catch (e) {}
+    } catch (e) {
+      next(e)
+    }
   }
 
-  async refresh(req: Request, res: Response) {
+  async refresh(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken } = req.cookies
       const userData = await UserService.refresh(refreshToken)
@@ -42,10 +46,12 @@ class AuthController {
       })
 
       return res.json(userData)
-    } catch (e) {}
+    } catch (e) {
+      next(e)
+    }
   }
 
-  async logout(req: Request, res: Response) {
+  async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken } = req.cookies
       const token = await UserService.logout(refreshToken)
@@ -53,7 +59,9 @@ class AuthController {
       res.clearCookie('refreshToken')
 
       return res.json(token)
-    } catch (e) {}
+    } catch (e) {
+      next(e)
+    }
   }
 }
 
