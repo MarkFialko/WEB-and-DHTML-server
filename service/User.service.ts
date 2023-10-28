@@ -5,7 +5,7 @@ import { HydratedDocument } from 'mongoose'
 import { UserDto } from '../dtos/User.dto'
 import TokenService from './Token.service'
 
-// TODO take out user token logic, add error handler and create middleware
+// TODO take out user token logic, add error handler
 
 
 class UserService {
