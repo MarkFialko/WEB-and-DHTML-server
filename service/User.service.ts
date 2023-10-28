@@ -5,6 +5,9 @@ import { HydratedDocument } from 'mongoose'
 import { UserDto } from '../dtos/User.dto'
 import TokenService from './Token.service'
 
+// TODO take out user token logic, add error handler and create middleware
+
+
 class UserService {
   async registration(email: string, password: string) {
     const candidate = await User.findOne({
@@ -77,7 +80,8 @@ class UserService {
     const userDto = new UserDto(user)
 
     const tokens = TokenService.generateTokens({ ...userDto })
-    await TokenService.saveToken(user._id, tokens.refreshToken)
+
+    await TokenService.saveToken(user.id, tokens.refreshToken)
 
     return {
       ...tokens,
