@@ -6,6 +6,7 @@ import { HydratedDocument } from 'mongoose'
 // @ts-ignore
 const router = new Router()
 
+// TODO отдельный эндпоинт для создания ролей
 /* create roles */
 // router.post('/role',async (req,res) => {
 //   const userRole: HydratedDocument<IRole> = new RoleModel({
