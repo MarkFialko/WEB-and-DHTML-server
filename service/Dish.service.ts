@@ -46,10 +46,14 @@ class DishService {
   }
 
   async getOne(dishId: string) {
-    const dish = await DishModel.findById(dishId)
+    try {
+      const dish = await DishModel.findById(dishId)
 
-    return {
-      dish: dish
+      return {
+        dish: dish
+      }
+    } catch (e) {
+      throw ApiError.BadRequest('Incorrect dishes id')
     }
   }
 
