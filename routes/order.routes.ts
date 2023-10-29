@@ -13,6 +13,6 @@ router.get('', authMiddleware, roleMiddleware([Roles.WAITER, Roles.ADMIN]), Orde
 // create order from common user
 router.post('', authMiddleware, OrderController.create)
 
-router.patch('', authMiddleware,roleMiddleware([Roles.WAITER,roles.ADMIN]), OrderController.update)
+router.patch('', authMiddleware,roleMiddleware([Roles.WAITER,Roles.ADMIN]), OrderController.update)
 
 export default router
