@@ -6,6 +6,7 @@ import { UserDto } from '../dtos/User.dto'
 import TokenService from './Token.service'
 import ApiError from '../exceptions/api.error'
 import RoleModel, { Roles } from '../models/Role.model'
+import BasketModel, { IBasket } from '../models/Basket.model'
 
 // TODO take out user token logic
 
@@ -36,7 +37,15 @@ class UserService {
       lastName:lastName,
       roles: [userRole!.role, adminRole!.role]
     })
+
+
+    // create basket for user
+    const basket: HydratedDocument<IBasket> = new BasketModel({
+      user: user._id
+    })
+
     await user.save()
+    await basket.save()
 
     const userDto = new UserDto(user)
 
