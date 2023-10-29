@@ -4,6 +4,8 @@ import OrderService from '../service/Order.service'
 class BasketController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
+      const userId = req.user
+
       const dishesInBasket = await OrderService.getAll(userId)
 
       return res.json(dishesInBasket)
@@ -36,6 +38,15 @@ class BasketController {
     const updatedOrder = await OrderService.update(userId,orderId)
 
     res.json(updatedOrder)
+
+  }
+
+  async getOrdersByUser(req:Request, res:Response, next:NextFunction) {
+    const userId = req.user.id
+
+    const orders = await OrderService.getOrdersByUser(userId)
+
+    res.json(orders)
 
   }
 

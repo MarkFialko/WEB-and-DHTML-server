@@ -1,5 +1,7 @@
 import BasketDishModel from '../models/BasketDish.model'
 import BasketModel from '../models/Basket.model'
+import DishModel from '../models/Dish.model'
+import { DishDTO } from '../dtos/Dish.dto'
 
 class BasketService {
   async getAll(userId: string) {
@@ -11,7 +13,21 @@ class BasketService {
       basket: userBasket._id
     })
 
-    return allFromBaskets
+    const basket = {}
+
+    const dishPromises = allFromBaskets.map(async (basketItem) => {
+      const dish = await DishModel.findById(basketItem.dish)
+
+      const dishDto = new DishDTO(dish)
+      basket[dishDto.id] = {
+        ...dishDto,
+        count: basket[dishDto.id] === undefined ? 0 : basket[dishDto.id].count + 1
+      }
+    })
+
+    await Promise.all(dishPromises)
+
+    return basket
   }
 
   async add(userId: string, dishId: string[]) {
