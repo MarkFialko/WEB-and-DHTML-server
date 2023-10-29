@@ -18,7 +18,8 @@ const roleMiddleware = (roles: Roles[]) => {
         return next(ApiError.UnauthorizedError())
       }
 
-      const userData = tokenService.validateAccessToken(accessToken)
+      // TODO Пофиксить PAYLOAD при добавлении роли
+      const userData: any = tokenService.validateAccessToken(accessToken)
 
       const { roles: userRoles } = userData
 
@@ -35,7 +36,6 @@ const roleMiddleware = (roles: Roles[]) => {
       }
 
       next()
-
     } catch (e) {
       return next(ApiError.UnauthorizedError())
     }

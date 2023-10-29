@@ -25,14 +25,17 @@ class UserService {
       role: Roles.USER
     })
 
+    // const adminRole = await RoleModel.findOne({
+    //   role: Roles.ADMIN
+    // })
+
     const user: HydratedDocument<IUser> = new User({
       email: email,
       password: hashedPassword,
       firstName: firstName,
       lastName:lastName,
-      roles: [userRole!.role]
+      roles: [userRole!.role, adminRole!.role]
     })
-
     await user.save()
 
     const userDto = new UserDto(user)
