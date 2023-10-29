@@ -5,11 +5,12 @@ import { HydratedDocument } from 'mongoose'
 import { UserDto } from '../dtos/User.dto'
 import TokenService from './Token.service'
 import ApiError from '../exceptions/api.error'
+import RoleModel, { Roles } from '../models/Role.model'
 
 // TODO take out user token logic
 
 class UserService {
-  async registration(email: string, password: string) {
+  async registration(email: string, password: string,firstName:string,lastName:string) {
     const candidate = await User.findOne({
       email: email
     })
@@ -20,9 +21,16 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
+    const userRole = await RoleModel.findOne({
+      role: Roles.USER
+    })
+
     const user: HydratedDocument<IUser> = new User({
       email: email,
-      password: hashedPassword
+      password: hashedPassword,
+      firstName: firstName,
+      lastName:lastName,
+      roles: [userRole!.role]
     })
 
     await user.save()
