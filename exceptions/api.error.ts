@@ -12,6 +12,10 @@ class ApiError extends Error {
     return new ApiError(401, 'User is not authorized')
   }
 
+  static NoAccessError() {
+    return new ApiError(403, 'User does not have access')
+  }
+
   static BadRequest(message: string, errors: Error[] = []) {
     return new ApiError(400, message, errors)
   }

@@ -1,7 +1,5 @@
 import Router from 'express'
 import AuthController from '../controllers/AuthController'
-import RoleModel, { IRole, Roles } from '../models/Role.model'
-import { HydratedDocument } from 'mongoose'
 
 // @ts-ignore
 const router = new Router()
