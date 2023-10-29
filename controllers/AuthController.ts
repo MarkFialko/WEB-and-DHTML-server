@@ -4,9 +4,9 @@ import UserService from '../service/User.service'
 class AuthController {
   async registration(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body
+      const { email, password, firstName,lastName } = req.body
 
-      const userData = await UserService.registration(email, password)
+      const userData = await UserService.registration(email, password,firstName,lastName)
 
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
