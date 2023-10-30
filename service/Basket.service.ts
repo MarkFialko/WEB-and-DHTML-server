@@ -23,7 +23,7 @@ class BasketService {
           const dishDto = new DishDTO(dish)
           basket[dishDto.id] = {
             ...dishDto,
-            count: basket[dishDto.id] === undefined ? 0 : basket[dishDto.id].count + 1
+            count: basket[dishDto.id] === undefined ? 1 : basket[dishDto.id].count + 1
           }
         }
       })
