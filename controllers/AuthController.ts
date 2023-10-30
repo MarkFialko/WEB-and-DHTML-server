@@ -63,6 +63,21 @@ class AuthController {
       next(e)
     }
   }
+
+
+  async getMe(req: Request, res: Response, next: NextFunction) {
+    try {
+     const userId = req.user.id
+
+      const userData = await UserService.getMe(userId)
+
+      return res.json(userData)
+
+    } catch (e) {
+      next(e)
+    }
+  }
+
 }
 
 export default new AuthController()

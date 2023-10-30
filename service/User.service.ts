@@ -111,6 +111,16 @@ class UserService {
     const token = await TokenService.removeToken(refreshToken)
     return token
   }
+
+  async getMe(userId:string) {
+    const user: UserDocument | null = await UserSchema.findOne({
+      _id: userId
+    })
+
+    return new UserDto(user!)
+
+  }
+
 }
 
 export default new UserService()
