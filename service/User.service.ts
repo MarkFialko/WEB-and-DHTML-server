@@ -1,18 +1,17 @@
-import User from '../models/User.schema'
-import UserSchema, { IUser } from '../models/User.schema'
+import UserSchema, { IUser, UserDocument } from '../models/User.schema'
 import bcrypt from 'bcryptjs'
 import { HydratedDocument } from 'mongoose'
 import { UserDto } from '../dtos/User.dto'
 import TokenService from './Token.service'
 import ApiError from '../exceptions/api.error'
-import RolesSchema, { Roles } from '../models/Role.schema'
+import RolesSchema, { RoleDocument, Roles } from '../models/Role.schema'
 import BasketSchema, { IBasket } from '../models/Basket.schema'
 
 // TODO take out user token logic
 
 class UserService {
   async registration(email: string, password: string, firstName: string, lastName: string) {
-    const candidate = await User.findOne({
+    const candidate: UserDocument | null = await UserSchema.findOne({
       email: email
     })
 
@@ -22,7 +21,7 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    const userRole = await RolesSchema.findOne({
+    const userRole: RoleDocument | null = await RolesSchema.findOne({
       role: Roles.USER
     })
 
@@ -30,12 +29,12 @@ class UserService {
     //   role: Roles.ADMIN
     // })
 
-    const user: HydratedDocument<IUser> = new User({
+    const user: HydratedDocument<IUser> = new UserSchema({
       email: email,
       password: hashedPassword,
       firstName: firstName,
       lastName: lastName,
-      roles: [userRole!.role, adminRole!.role]
+      roles: [userRole!.role /*adminRole!.role*/]
     })
 
     // create basket for user
@@ -58,7 +57,7 @@ class UserService {
   }
 
   async login(email: string, password: string) {
-    const user = await User.findOne({
+    const user: UserDocument | null = await UserSchema.findOne({
       email: email
     })
 
@@ -88,18 +87,19 @@ class UserService {
       throw ApiError.UnauthorizedError()
     }
 
-    const userData = TokenService.validateRefreshToken(refreshToken)
+    const userData = TokenService.validateRefreshToken(refreshToken) as UserDto
     const tokenFromDB = await TokenService.findToken(refreshToken)
     if (!userData || !tokenFromDB) {
       throw ApiError.UnauthorizedError()
     }
 
-    const user = await UserSchema.findById(userData.id)
-    const userDto = new UserDto(user)
+    const user: UserDocument | null = await UserSchema.findById(userData.id)
+
+    const userDto = new UserDto(user as UserDocument)
 
     const tokens = TokenService.generateTokens({ ...userDto })
 
-    await TokenService.saveToken(user.id, tokens.refreshToken)
+    await TokenService.saveToken(userDto.id, tokens.refreshToken)
 
     return {
       ...tokens,

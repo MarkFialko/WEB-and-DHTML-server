@@ -1,3 +1,5 @@
+import { DishDocument } from '../models/Dish.schema'
+
 export class DishDTO {
   public name: string
   public id: string
@@ -5,7 +7,7 @@ export class DishDTO {
   public description: string
   public image: string
 
-  constructor(model: any) {
+  constructor(model: DishDocument) {
     this.name = model.name
     this.id = model._id
     this.price = model.price

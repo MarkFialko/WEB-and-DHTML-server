@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
 
 export interface IDish {
   name: string
@@ -6,6 +6,8 @@ export interface IDish {
   description: string
   image: string
 }
+
+export interface DishDocument extends IDish, Document {}
 
 const DishSchema = new Schema<IDish>({
   name: {
@@ -26,4 +28,4 @@ const DishSchema = new Schema<IDish>({
   }
 })
 
-export default model('Dish', DishSchema)
+export default model<IDish>('Dish', DishSchema)

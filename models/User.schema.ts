@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
 import { Roles } from './Role.schema'
 
 export interface IUser {
@@ -8,6 +8,8 @@ export interface IUser {
   lastName: string
   roles: Roles[]
 }
+
+export interface UserDocument extends IUser, Document {}
 
 const UserSchema = new Schema<IUser>({
   email: {
@@ -30,9 +32,9 @@ const UserSchema = new Schema<IUser>({
   roles: [
     {
       type: String,
-      ref: 'Role',
+      ref: 'Role'
     }
   ]
 })
 
-export default model('User', UserSchema)
+export default model<IUser>('User', UserSchema)

@@ -1,45 +1,49 @@
-import BasketSchema from '../models/Basket.schema'
+import BasketSchema, { IBasket } from '../models/Basket.schema'
 import OrderSchema, { IOrder, OrderStatus } from '../models/Order.schema'
 import UserOrderSchema from '../models/UserOrder.schema'
-import { HydratedDocument } from 'mongoose'
+import { Document, HydratedDocument } from 'mongoose'
 
 class BasketService {
   async getAll() {
-    const orders = await OrderSchema.find({})
+    const orders: Document<IOrder>[] = await OrderSchema.find({})
 
     return orders
   }
 
   async create(userId: string) {
-    const userBasket = await BasketSchema.findOne({
+    const userBasket: Document<IBasket> | null = await BasketSchema.findOne({
       user: userId
     })
 
-    const order = new OrderSchema({
-      basket: userBasket._id,
-      status: OrderStatus.PENDING
-    })
+    if (userBasket) {
+      const order = new OrderSchema({
+        basket: userBasket._id,
+        status: OrderStatus.PENDING
+      })
 
-    order.save()
+      await order.save()
 
-    return order
+      return order
+    }
   }
 
   async update(userId: string, orderId: string) {
-    const order: HydratedDocument<IOrder> = await OrderSchema.findById(orderId)
+    const order: HydratedDocument<IOrder> | null = await OrderSchema.findById(orderId)
 
-    order.status = OrderStatus.SUCCESS
+    if (order) {
+      order.status = OrderStatus.SUCCESS
 
-    order.save()
+      await order.save()
 
-    const userOrder = new UserOrder({
-      user: userId,
-      order: order._id
-    })
+      const userOrder = new UserOrderSchema({
+        user: userId,
+        order: order._id
+      })
 
-    userOrder.save()
+      await userOrder.save()
 
-    return userOrder
+      return userOrder
+    }
   }
 
   async getOrdersByUser(userId: string) {

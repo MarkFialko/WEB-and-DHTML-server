@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types, Document } from 'mongoose'
 
 export enum OrderStatus {
   PENDING = 'Ожидается',
@@ -6,9 +6,11 @@ export enum OrderStatus {
 }
 
 export interface IOrder {
-  basket: {}
+  basket: Types.ObjectId
   status: OrderStatus
 }
+
+export interface OrderDocument extends IOrder, Document {}
 
 const OrderSchema = new Schema<IOrder>({
   basket: {
@@ -22,4 +24,4 @@ const OrderSchema = new Schema<IOrder>({
   }
 })
 
-export default model('Order', OrderSchema)
+export default model<IOrder>('Order', OrderSchema)

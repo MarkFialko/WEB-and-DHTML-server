@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import TokenSchema, { IToken } from '../models/Token.schema'
+import TokenSchema, { IToken, TokenDocument } from '../models/Token.schema'
 import { HydratedDocument } from 'mongoose'
 
 class TokenService {
@@ -62,7 +62,7 @@ class TokenService {
   }
 
   async findToken(refreshToken: string) {
-    const tokenData = await TokenSchema.findOne({
+    const tokenData: TokenDocument | null = await TokenSchema.findOne({
       refreshToken: refreshToken
     })
 

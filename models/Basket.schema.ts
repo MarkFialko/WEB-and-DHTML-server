@@ -1,8 +1,10 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types, Document } from 'mongoose'
 
 export interface IBasket {
-  user: {}
+  user: Types.ObjectId
 }
+
+export interface BasketDocument extends IBasket, Document {}
 
 const BasketSchema = new Schema<IBasket>({
   user: {
@@ -11,4 +13,4 @@ const BasketSchema = new Schema<IBasket>({
   },
 })
 
-export default model('Basket', BasketSchema)
+export default model<IBasket>('Basket', BasketSchema)
