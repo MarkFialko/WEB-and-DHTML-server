@@ -10,7 +10,7 @@ export interface IRole {
   role: Roles
 }
 
-const RoleModel = new Schema<IRole>({
+const RoleSchema = new Schema<IRole>({
   role: {
     type: String,
     enum: Object.values(Roles),
@@ -18,4 +18,4 @@ const RoleModel = new Schema<IRole>({
   }
 })
 
-export default model('Role', RoleModel)
+export default model('Role', RoleSchema)

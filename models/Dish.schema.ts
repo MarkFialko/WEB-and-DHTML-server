@@ -7,7 +7,7 @@ export interface IDish {
   image: string
 }
 
-const DishModel = new Schema<IDish>({
+const DishSchema = new Schema<IDish>({
   name: {
     type: String,
     required: true
@@ -26,4 +26,4 @@ const DishModel = new Schema<IDish>({
   }
 })
 
-export default model('Dish', DishModel)
+export default model('Dish', DishSchema)

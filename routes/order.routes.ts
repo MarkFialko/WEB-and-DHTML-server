@@ -2,7 +2,7 @@ import Router from 'express'
 import authMiddleware from '../middlewares/auth.middleware'
 import OrderController from '../controllers/OrderController'
 import roleMiddleware from '../middlewares/role.middleware'
-import { Roles } from '../models/Role.model'
+import { Roles } from '../models/Role.schema'
 
 // @ts-ignore
 const router = new Router()

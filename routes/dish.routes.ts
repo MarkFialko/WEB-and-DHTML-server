@@ -1,7 +1,7 @@
 import Router from 'express'
 import DishController from '../controllers/DishController'
 import roleMiddleware from '../middlewares/role.middleware'
-import { Roles } from '../models/Role.model'
+import { Roles } from '../models/Role.schema'
 
 // @ts-ignore
 const router = new Router()

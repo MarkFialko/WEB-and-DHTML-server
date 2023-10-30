@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import TokenModel, { IToken } from '../models/Token.model'
+import TokenSchema, { IToken } from '../models/Token.schema'
 import { HydratedDocument } from 'mongoose'
 
 class TokenService {
@@ -21,7 +21,6 @@ class TokenService {
     } catch (e) {
       return null
     }
-
   }
 
   validateRefreshToken(refreshToken: string) {
@@ -35,7 +34,7 @@ class TokenService {
   }
 
   async saveToken(userId: any, refreshToken: string) {
-    const tokenData: HydratedDocument<IToken> | null = await TokenModel.findOne({
+    const tokenData: HydratedDocument<IToken> | null = await TokenSchema.findOne({
       user: userId
     })
 
@@ -44,7 +43,7 @@ class TokenService {
       return tokenData.save()
     }
 
-    const token: HydratedDocument<IToken> = new TokenModel({
+    const token: HydratedDocument<IToken> = new TokenSchema({
       user: userId,
       refreshToken: refreshToken
     })
@@ -55,7 +54,7 @@ class TokenService {
   }
 
   async removeToken(refreshToken: string) {
-    const tokenData = await TokenModel.deleteOne({
+    const tokenData = await TokenSchema.deleteOne({
       refreshToken: refreshToken
     })
 
@@ -63,7 +62,7 @@ class TokenService {
   }
 
   async findToken(refreshToken: string) {
-    const tokenData = await TokenModel.findOne({
+    const tokenData = await TokenSchema.findOne({
       refreshToken: refreshToken
     })
 

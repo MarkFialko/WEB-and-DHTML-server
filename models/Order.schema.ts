@@ -10,7 +10,7 @@ export interface IOrder {
   status: OrderStatus
 }
 
-const OrderModel = new Schema<IOrder>({
+const OrderSchema = new Schema<IOrder>({
   basket: {
     type: Schema.Types.ObjectId,
     ref: 'Basket'
@@ -22,4 +22,4 @@ const OrderModel = new Schema<IOrder>({
   }
 })
 
-export default model('Order', OrderModel)
+export default model('Order', OrderSchema)

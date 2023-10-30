@@ -4,11 +4,11 @@ export interface IBasket {
   user: {}
 }
 
-const BasketModel = new Schema<IBasket>({
+const BasketSchema = new Schema<IBasket>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
 })
 
-export default model('Basket', BasketModel)
+export default model('Basket', BasketSchema)

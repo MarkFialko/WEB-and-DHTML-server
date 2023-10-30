@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { Roles } from './Role.model'
+import { Roles } from './Role.schema'
 
 export interface IUser {
   email: string
@@ -9,7 +9,7 @@ export interface IUser {
   roles: Roles[]
 }
 
-const UserModel = new Schema<IUser>({
+const UserSchema = new Schema<IUser>({
   email: {
     type: String,
     required: true,
@@ -35,4 +35,4 @@ const UserModel = new Schema<IUser>({
   ]
 })
 
-export default model('User', UserModel)
+export default model('User', UserSchema)

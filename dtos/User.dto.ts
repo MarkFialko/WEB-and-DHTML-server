@@ -1,4 +1,4 @@
-import { Roles } from '../models/Role.model'
+import { Roles } from '../models/Role.schema'
 
 export class UserDto {
   public email: string

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { Roles } from '../models/Role.model'
+import { Roles } from '../models/Role.schema'
 import ApiError from '../exceptions/api.error'
 import tokenService from '../service/Token.service'
 

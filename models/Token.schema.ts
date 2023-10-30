@@ -5,7 +5,7 @@ export interface IToken {
   refreshToken: string
 }
 
-const TokenModel = new Schema<IToken>({
+const TokenSchema = new Schema<IToken>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
@@ -16,4 +16,4 @@ const TokenModel = new Schema<IToken>({
   }
 })
 
-export default model('Token', TokenModel)
+export default model('Token', TokenSchema)

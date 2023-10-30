@@ -1,22 +1,22 @@
-import BasketDishModel from '../models/BasketDish.model'
-import BasketModel from '../models/Basket.model'
-import DishModel from '../models/Dish.model'
+import DishSchema from '../models/Dish.schema'
 import { DishDTO } from '../dtos/Dish.dto'
+import BasketSchema from '../models/Basket.schema'
+import BasketDishSchema from '../models/BasketDish.schema'
 
 class BasketService {
   async getAll(userId: string) {
-    const userBasket = await BasketModel.findOne({
+    const userBasket = await BasketSchema.findOne({
       user: userId
     })
 
-    const allFromBaskets = await BasketDishModel.find({
+    const allFromBaskets = await BasketDishSchema.find({
       basket: userBasket._id
     })
 
     const basket = {}
 
     const dishPromises = allFromBaskets.map(async (basketItem) => {
-      const dish = await DishModel.findById(basketItem.dish)
+      const dish = await DishSchema.findById(basketItem.dish)
 
       const dishDto = new DishDTO(dish)
       basket[dishDto.id] = {
@@ -35,7 +35,7 @@ class BasketService {
       user: userId
     })
 
-    await BasketDishModel.insertMany(
+    await BasketDishSchema.insertMany(
       dishId.map((curDishId) => ({
         basket: userBasket._id,
         dish: curDishId
@@ -48,7 +48,7 @@ class BasketService {
   }
 
   async delete(userId: string, dishId: string[]) {
-    const userBasket = await BasketModel.findOne({
+    const userBasket = await BasketSchema.findOne({
       user: userId
     })
 

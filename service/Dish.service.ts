@@ -1,17 +1,11 @@
-import User from '../models/User.model'
-import UserModel, { IUser } from '../models/User.model'
-import bcrypt from 'bcryptjs'
 import { HydratedDocument } from 'mongoose'
-import { UserDto } from '../dtos/User.dto'
-import TokenService from './Token.service'
 import ApiError from '../exceptions/api.error'
-import DishModel, { IDish } from '../models/Dish.model'
+import DishSchema, { IDish } from '../models/Dish.schema'
 import { DishDTO } from '../dtos/Dish.dto'
 
 class DishService {
-  async create(name: string,price: number,description: string,image: string) {
-
-    const dishToFind = await DishModel.findOne({
+  async create(name: string, price: number, description: string, image: string) {
+    const dishToFind = await DishSchema.findOne({
       name: name
     })
 
@@ -19,12 +13,11 @@ class DishService {
       throw ApiError.BadRequest(`Dish with name: ${name} already exist`)
     }
 
-
-    const dish: HydratedDocument<IDish> = new DishModel({
+    const dish: HydratedDocument<IDish> = new DishSchema({
       name: name,
       price: price,
       description: description,
-      image:image,
+      image: image
     })
 
     await dish.save()
@@ -37,17 +30,16 @@ class DishService {
   }
 
   async getAll() {
-    const dishes = await DishModel.find()
+    const dishes = await DishSchema.find()
 
     return {
-      dishes:dishes
+      dishes: dishes
     }
-
   }
 
   async getOne(dishId: string) {
     try {
-      const dish = await DishModel.findById(dishId)
+      const dish = await DishSchema.findById(dishId)
 
       return {
         dish: dish
@@ -56,7 +48,6 @@ class DishService {
       throw ApiError.BadRequest('Incorrect dishes id')
     }
   }
-
 }
 
 export default new DishService()
