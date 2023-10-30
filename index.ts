@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
 import router from './routes/index'
 import errorMiddleware from './middlewares/error.middleware'
-
+import cors from 'cors'
 dotenv.config()
 
 const app: Express = express()
@@ -15,8 +15,11 @@ app.use(express.json())
 
 // to parse cookie
 app.use(cookieParser())
+
+app.use(cors())
 app.use('/api', router)
 app.use(errorMiddleware)
+
 
 const start = async () => {
   try {
