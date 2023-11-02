@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import tokenService from '../service/Token.service'
 import ApiError from '../exceptions/api.error'
+import { UserRequest } from '../types/UseRequest'
+import { UserDto } from '../dtos/User.dto'
 
-const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = (req: UserRequest, res: Response, next: NextFunction) => {
   try {
     const authorizationHeader = req.headers.authorization
     if (!authorizationHeader) {
@@ -22,7 +24,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
       return next(ApiError.UnauthorizedError())
     }
 
-    req.user = userData
+    req.user = userData as UserDto
     next()
 
   } catch (e) {

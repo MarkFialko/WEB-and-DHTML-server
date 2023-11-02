@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import UserService from '../service/User.service'
+import { UserRequest } from '../types/UseRequest'
 
 class AuthController {
   async registration(req: Request, res: Response, next: NextFunction) {
@@ -64,11 +65,11 @@ class AuthController {
     }
   }
 
-  async getMe(req: Request, res: Response, next: NextFunction) {
+  async getMe(req: UserRequest, res: Response, next: NextFunction) {
     try {
       const userId = req.user.id
 
-      const userData = await UserService.getMe(userId)
+      const userData = await UserService.getMe(userId as unknown as string)
 
       return res.json(userData)
     } catch (e) {
@@ -87,11 +88,11 @@ class AuthController {
     }
   }
 
-  async getUsers(req: Request, res: Response, next: NextFunction) {
+  async getUsers(req: UserRequest, res: Response, next: NextFunction) {
     console.log('getUsrController')
     try {
       const adminId  =req.user.id
-      const users = await UserService.getUsers(adminId)
+      const users = await UserService.getUsers(adminId as unknown as string)
 
       res.json(users)
 

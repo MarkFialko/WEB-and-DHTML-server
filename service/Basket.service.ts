@@ -14,7 +14,7 @@ class BasketService {
         basket: userBasket._id
       })
 
-      const basket = {}
+      const basket = {} as any
 
       const dishPromises = allFromBaskets.map(async (basketItem) => {
         const dish: DishDocument | null = await DishSchema.findById(basketItem.dish)
@@ -41,7 +41,7 @@ class BasketService {
 
     await BasketDishSchema.insertMany(
       dishId.map((curDishId) => ({
-        basket: userBasket._id,
+        basket: userBasket!._id,
         dish: curDishId
       }))
     )
@@ -57,7 +57,7 @@ class BasketService {
     })
 
     await BasketDishSchema.deleteOne({
-      basket: userBasket._id,
+      basket: userBasket!._id,
       dish: dishId
     })
 

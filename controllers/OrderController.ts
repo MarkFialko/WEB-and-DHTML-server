@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import OrderService from '../service/Order.service'
+import { UserRequest } from '../types/UseRequest'
 
 class BasketController {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user
-
-      const dishesInBasket = await OrderService.getAll(userId)
+      const dishesInBasket = await OrderService.getAll()
 
       return res.json(dishesInBasket)
     } catch (e) {
@@ -14,42 +13,32 @@ class BasketController {
     }
   }
 
-  async create(req: Request, res: Response, next: NextFunction) {
+  async create(req: UserRequest, res: Response, next: NextFunction) {
     const userId = req.user.id
 
-    const order = await OrderService.create(userId)
+    const order = await OrderService.create(userId as unknown as string)
 
     return res.json(order)
   }
 
-  async create(req: Request, res: Response, next: NextFunction) {
-    const userId = req.user.id
 
-    const order = await OrderService.create(userId)
-
-    return res.json(order)
-  }
-
-  async update(req:Request, res:Response, next:NextFunction) {
+  async update(req: UserRequest, res: Response, next: NextFunction) {
     const userId = req.user.id
 
     const { orderId } = req.body
 
-    const updatedOrder = await OrderService.update(userId,orderId)
+    const updatedOrder = await OrderService.update(userId as unknown as string, orderId)
 
     res.json(updatedOrder)
-
   }
 
-  async getOrdersByUser(req:Request, res:Response, next:NextFunction) {
+  async getOrdersByUser(req: UserRequest, res: Response, next: NextFunction) {
     const userId = req.user.id
 
-    const orders = await OrderService.getOrdersByUser(userId)
+    const orders = await OrderService.getOrdersByUser(userId as unknown as string)
 
     res.json(orders)
-
   }
-
 }
 
 export default new BasketController()

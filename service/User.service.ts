@@ -128,9 +128,9 @@ class UserService {
     const user = await UserSchema.findOne({
       _id: userId
     })
-    user!.roles.push(bdRole.role)
+    user!.roles.push(bdRole!.role)
 
-    await user.save()
+    await user!.save()
 
 
     return true
