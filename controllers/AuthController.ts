@@ -4,9 +4,9 @@ import UserService from '../service/User.service'
 class AuthController {
   async registration(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, firstName,lastName } = req.body
+      const { email, password, firstName, lastName } = req.body
 
-      const userData = await UserService.registration(email, password,firstName,lastName)
+      const userData = await UserService.registration(email, password, firstName, lastName)
 
       res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -64,18 +64,41 @@ class AuthController {
     }
   }
 
-
   async getMe(req: Request, res: Response, next: NextFunction) {
     try {
-     const userId = req.user.id
+      const userId = req.user.id
 
       const userData = await UserService.getMe(userId)
 
       return res.json(userData)
-
     } catch (e) {
       next(e)
     }
+  }
+
+  async setRoles(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {userId,role } = req.body
+
+      const data = await UserService.setRoles(userId,role)
+
+      return res.json(data)
+    } catch (e) {
+    }
+  }
+
+  async getUsers(req: Request, res: Response, next: NextFunction) {
+    console.log('getUsrController')
+    try {
+      const adminId  =req.user.id
+      const users = await UserService.getUsers(adminId)
+
+      res.json(users)
+
+    } catch (e) {
+        console.log(e,'error')
+    }
+
   }
 
 }

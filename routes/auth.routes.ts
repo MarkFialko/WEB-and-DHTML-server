@@ -1,6 +1,8 @@
 import Router from 'express'
 import AuthController from '../controllers/AuthController'
 import AuthMiddleware from '../middlewares/auth.middleware'
+import roleMiddleware from '../middlewares/role.middleware'
+import { Roles } from '../models/Role.schema'
 
 // @ts-ignore
 const router = new Router()
@@ -29,6 +31,9 @@ const router = new Router()
 //   })
 //
 // })
+
+router.post('/roles',roleMiddleware([Roles.ADMIN]),AuthController.setRoles)
+router.get('/users',AuthMiddleware,roleMiddleware([Roles.ADMIN]),AuthController.getUsers)
 
 router.post('/registration', AuthController.registration)
 

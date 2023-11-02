@@ -25,16 +25,16 @@ class UserService {
       role: Roles.USER
     })
 
-    // const adminRole = await RolesSchema.findOne({
-    //   role: Roles.ADMIN
-    // })
+    const adminRole = await RolesSchema.findOne({
+      role: Roles.ADMIN
+    })
 
     const user: HydratedDocument<IUser> = new UserSchema({
       email: email,
       password: hashedPassword,
       firstName: firstName,
       lastName: lastName,
-      roles: [userRole!.role /*adminRole!.role*/]
+      roles: [userRole!.role /*, adminRole!.role*/]
     })
 
     // create basket for user
@@ -112,15 +112,36 @@ class UserService {
     return token
   }
 
-  async getMe(userId:string) {
+  async getMe(userId: string) {
     const user: UserDocument | null = await UserSchema.findOne({
       _id: userId
     })
 
     return new UserDto(user!)
-
   }
 
+  async setRoles(userId:string, role: string) {
+    const bdRole = await RolesSchema.findOne({
+        role: role
+    })
+
+    const user = await UserSchema.findOne({
+      _id: userId
+    })
+    user!.roles.push(bdRole.role)
+
+    await user.save()
+
+
+    return true
+  }
+
+  async getUsers(adminId: string) {
+    const users = await UserSchema.find({
+      _id: { $ne: adminId }
+    })
+    return users.map(user=> new UserDto(user))
+  }
 }
 
 export default new UserService()
