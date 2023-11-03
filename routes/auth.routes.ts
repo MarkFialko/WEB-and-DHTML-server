@@ -41,6 +41,8 @@ router.post('/login', AuthController.login)
 
 router.get('/refresh', AuthController.refresh)
 
+router.delete('/roles',roleMiddleware([Roles.ADMIN]),AuthController.deleteRole)
+
 router.get('/me',AuthMiddleware, AuthController.getMe)
 
 router.post('/logout', AuthController.logout)

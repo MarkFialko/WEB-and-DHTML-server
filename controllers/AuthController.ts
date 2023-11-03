@@ -88,6 +88,17 @@ class AuthController {
     }
   }
 
+  async deleteRole(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {userId,role } = req.body
+
+      const data = await UserService.deleteRole(userId,role)
+
+      return res.json(data)
+    } catch (e) {
+    }
+  }
+
   async getUsers(req: UserRequest, res: Response, next: NextFunction) {
     console.log('getUsrController')
     try {

@@ -136,6 +136,18 @@ class UserService {
     return true
   }
 
+  async deleteRole(userId:string, role: string) {
+    const user = await UserSchema.findOne({
+      _id: userId
+    })
+    user!.roles = user!.roles.filter(r => role !== r)
+
+    await user!.save()
+
+
+    return true
+  }
+
   async getUsers(adminId: string) {
     const users = await UserSchema.find({
       _id: { $ne: adminId }
