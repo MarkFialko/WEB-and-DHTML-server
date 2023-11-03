@@ -3,8 +3,12 @@ import ApiError from '../exceptions/api.error'
 import DishSchema, { DishDocument, IDish } from '../models/Dish.schema'
 import { DishDTO } from '../dtos/Dish.dto'
 
+export interface DishResponse {
+  dishes: DishDTO[]
+}
+
 class DishService {
-  async create(name: string, price: number, description: string, image: string) {
+  async create(name: string, price: number, description: string, image: string): Promise<{ dish: DishDTO }> {
     const dishToFind = await DishSchema.findOne({
       name: name
     })
@@ -29,20 +33,22 @@ class DishService {
     }
   }
 
-  async getAll() {
+  async getAll(): Promise<DishResponse> {
     const dishes = (await DishSchema.find()) as DishDocument[]
 
+    const dishDTOS = dishes.map((dish) => new DishDTO(dish))
+
     return {
-      dishes: dishes
+      dishes: dishDTOS
     }
   }
 
-  async getOne(dishId: string) {
+  async getOne(dishId: string): Promise<{ dish: DishDTO }> {
     try {
       const dish = (await DishSchema.findById(dishId)) as DishDocument
 
       return {
-        dish: dish
+        dish: { ...new DishDTO(dish) }
       }
     } catch (e) {
       throw ApiError.BadRequest('Incorrect dishes id')
