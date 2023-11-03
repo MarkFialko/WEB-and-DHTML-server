@@ -1,7 +1,8 @@
 import { model, Schema, Types, Document } from 'mongoose'
+import { UserDocument } from './User.schema'
 
 export interface IBasket {
-  user: Types.ObjectId
+  user: UserDocument
 }
 
 export interface BasketDocument extends IBasket, Document {}

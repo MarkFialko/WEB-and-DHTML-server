@@ -1,4 +1,5 @@
 import { Document, model, Schema, Types } from 'mongoose'
+import { BasketDocument } from './Basket.schema'
 
 export enum OrderStatus {
   PENDING = 'Ожидается',
@@ -6,8 +7,7 @@ export enum OrderStatus {
 }
 
 export interface IOrder {
-  basket: Types.ObjectId
-  dishes: Types.ObjectId[]
+  basket: BasketDocument
   status: OrderStatus
 }
 
@@ -18,11 +18,6 @@ const OrderSchema = new Schema<IOrder>({
     type: Schema.Types.ObjectId,
     ref: 'Basket'
   },
-  dishes: [
-    {
-      type: Types.ObjectId
-    }
-  ],
   status: {
     type: String,
     enum: Object.values(OrderStatus),

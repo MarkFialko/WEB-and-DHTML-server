@@ -1,7 +1,8 @@
 import { Document, model, Schema, Types } from 'mongoose'
+import { UserDocument } from './User.schema'
 
 export interface IToken {
-  user: Types.ObjectId
+  user: UserDocument
   refreshToken: string
 }
 
