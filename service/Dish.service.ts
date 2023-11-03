@@ -1,6 +1,6 @@
 import { HydratedDocument } from 'mongoose'
 import ApiError from '../exceptions/api.error'
-import DishSchema, { IDish } from '../models/Dish.schema'
+import DishSchema, { DishDocument, IDish } from '../models/Dish.schema'
 import { DishDTO } from '../dtos/Dish.dto'
 
 class DishService {
@@ -30,7 +30,7 @@ class DishService {
   }
 
   async getAll() {
-    const dishes = await DishSchema.find()
+    const dishes = (await DishSchema.find()) as DishDocument[]
 
     return {
       dishes: dishes
@@ -39,7 +39,7 @@ class DishService {
 
   async getOne(dishId: string) {
     try {
-      const dish = await DishSchema.findById(dishId)
+      const dish = (await DishSchema.findById(dishId)) as DishDocument
 
       return {
         dish: dish
