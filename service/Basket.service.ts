@@ -1,69 +1,78 @@
-import DishSchema, { DishDocument } from '../models/Dish.schema'
-import { DishDTO } from '../dtos/Dish.dto'
 import BasketSchema, { BasketDocument } from '../models/Basket.schema'
-import BasketDishSchema from '../models/BasketDish.schema'
+import BasketDishSchema, { IBasketDishDocument } from '../models/BasketDish.schema'
+import { OrderStatus } from '../models/Order.schema'
+import { BasketDishDto } from '../dtos/Basket.dto'
+import { DishDTO } from '../dtos/Dish.dto'
 
 class BasketService {
   async getAll(userId: string) {
-    const userBasket: BasketDocument | null = await BasketSchema.findOne({
+    const userBasket = (await BasketSchema.findOne({
       user: userId
+    })) as BasketDocument
+
+    const notOrderedBasketDishes = (await BasketDishSchema.find({
+      basket: userBasket._id,
+      status: OrderStatus.PENDING
+    }).populate('dish')) as IBasketDishDocument[]
+
+    type dishId = string
+
+    const basketDishesCount: Map<dishId,number> = new Map()
+
+    const resultDishes: DishDTO[] = []
+
+    notOrderedBasketDishes.map((basketDish) => {
+      const dishDto = new DishDTO(basketDish.dish)
+
+      const dishDtoCount = basketDishesCount.get(dishDto.id)
+
+      if (!dishDtoCount) {
+        basketDishesCount.set(dishDto.id,1)
+        resultDishes.push(dishDto)
+      } else {
+        basketDishesCount.set(dishDto.id,dishDtoCount + 1)
+      }
+
     })
 
-    if (userBasket) {
-      const allFromBaskets = await BasketDishSchema.find({
-        basket: userBasket._id
-      })
-
-      const basket = {} as any
-
-      const dishPromises = allFromBaskets.map(async (basketItem) => {
-        const dish: DishDocument | null = await DishSchema.findById(basketItem.dish)
-
-        if (dish) {
-          const dishDto = new DishDTO(dish)
-          basket[dishDto.id] = {
-            ...dishDto,
-            count: basket[dishDto.id] === undefined ? 1 : basket[dishDto.id].count + 1
+      return {
+        basket: userBasket._id,
+        dishes: resultDishes.map((dish) => {
+          return {
+            dish: dish,
+            count: basketDishesCount.get(dish.id)
           }
-        }
-      })
-
-      await Promise.all(dishPromises)
-
-      return basket
-    }
+        })
+      }
   }
 
   async add(userId: string, dishId: string[]) {
-    const userBasket = await BasketSchema.findOne({
+    const userBasket = (await BasketSchema.findOne({
       user: userId
-    })
+    })) as BasketDocument
 
     await BasketDishSchema.insertMany(
       dishId.map((curDishId) => ({
         basket: userBasket!._id,
-        dish: curDishId
+        dish: curDishId,
+        status: OrderStatus.PENDING
       }))
     )
 
-    const dishesInUserBasket = await new BasketService().getAll(userId)
-
-    return dishesInUserBasket
+    return await new BasketService().getAll(userId)
   }
 
   async delete(userId: string, dishId: string[]) {
-    const userBasket = await BasketSchema.findOne({
+    const userBasket = (await BasketSchema.findOne({
       user: userId
-    })
+    })) as BasketDocument
 
     await BasketDishSchema.deleteOne({
       basket: userBasket!._id,
       dish: dishId
     })
 
-    const dishesInUserBasket = await new BasketService().getAll(userId)
-
-    return dishesInUserBasket
+    return await new BasketService().getAll(userId)
   }
 }
 
