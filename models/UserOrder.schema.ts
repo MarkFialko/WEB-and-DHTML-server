@@ -1,9 +1,13 @@
-import { model, Schema } from 'mongoose'
+import { Document, model, Schema } from 'mongoose'
+import { UserDocument } from './User.schema'
+import { OrderDocument } from './Order.schema'
 
 export interface IUserOrder {
-  user: {},
-  order: {}
+  user: UserDocument
+  order: OrderDocument
 }
+
+export interface UserOrderDocument extends Document {}
 
 const UserOrder = new Schema<IUserOrder>({
   user: {
