@@ -5,10 +5,13 @@ import { DishDTO } from './Dish.dto'
 export class OrderDto {
   public basket: Types.ObjectId
   public id: Types.ObjectId
-  public dishes: DishDTO[]
+  public dishes: {
+    dish: DishDTO
+    count: number
+  }[]
   public status: OrderStatus
 
-  constructor(model: OrderDocument, dishes: DishDTO[]) {
+  constructor(model: OrderDocument, dishes: any) {
     this.basket = model.basket
     this.id = model._id
     this.dishes = dishes
