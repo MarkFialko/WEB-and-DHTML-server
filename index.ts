@@ -5,10 +5,34 @@ import cookieParser from 'cookie-parser'
 import router from './routes/index'
 import errorMiddleware from './middlewares/error.middleware'
 import cors from 'cors'
+import multer from 'multer'
+
 dotenv.config()
 
 const app: Express = express()
 const port = process.env.PORT
+
+//load images to static folder
+const storage = multer.diskStorage({
+  destination: (_, __, cb) => {
+    cb(null, 'uploads')
+  },
+  filename: (_,file,cb)=> {
+      cb(null,file.originalname)
+  }
+})
+
+const upload = multer({ storage})
+
+
+app.post('/upload',upload.single('image'), (req,res) => {
+  res.json({
+    url: `/uploads/${req.file?.originalname}`
+  })
+})
+
+// to show image in uploads folder
+app.use('/uploads',express.static('uploads'))
 
 // to parse body
 app.use(express.json())
