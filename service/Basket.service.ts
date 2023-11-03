@@ -39,7 +39,7 @@ class BasketService {
         basket: userBasket._id,
         dishes: resultDishes.map((dish) => {
           return {
-            dish: dish,
+            ...dish,
             count: basketDishesCount.get(dish.id)
           }
         })
