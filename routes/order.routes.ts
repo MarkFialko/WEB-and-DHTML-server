@@ -13,7 +13,7 @@ router.get('', authMiddleware, roleMiddleware([Roles.WAITER, Roles.ADMIN]), Orde
 // create order from common user
 router.post('', authMiddleware, OrderController.create)
 
-// completer order
+// completer order for waiter
 router.patch('', authMiddleware,roleMiddleware([Roles.WAITER,Roles.ADMIN]), OrderController.update)
 
 // check my orders
