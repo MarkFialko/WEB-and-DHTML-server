@@ -1,9 +1,10 @@
 import { OrderDocument, OrderStatus } from '../models/Order.schema'
 import { Types } from 'mongoose'
 import { DishDTO } from './Dish.dto'
+import { BasketDocument } from '../models/Basket.schema'
 
 export class OrderDto {
-  public basket: Types.ObjectId
+  public basket: BasketDocument
   public id: Types.ObjectId
   public dishes: {
     dish: DishDTO
