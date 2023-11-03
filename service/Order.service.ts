@@ -117,6 +117,21 @@ class OrderService {
 
     return ordersDtos
   }
+
+  async getOrdered(userId:string) {
+    const basket = await BasketSchema.findOne({
+      user: userId
+    })
+
+    console.log(basket,'basketId')
+
+    const userOrders = await OrderSchema.find({
+      basket: basket._id
+    })
+
+    return userOrders
+  }
+
 }
 
 export default new OrderService()

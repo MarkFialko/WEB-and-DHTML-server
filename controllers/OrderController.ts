@@ -39,6 +39,15 @@ class BasketController {
 
     res.json(orders)
   }
+
+  async getOrdered(req: UserRequest, res: Response, next: NextFunction) {
+    const userId = req.user.id
+
+    const orders = await OrderService.getOrdered(userId as unknown as string)
+
+    res.json(orders)
+  }
+
 }
 
 export default new BasketController()

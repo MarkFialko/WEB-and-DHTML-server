@@ -10,6 +10,8 @@ const router = new Router()
 // show all orders to admin and waiters
 router.get('', authMiddleware, roleMiddleware([Roles.WAITER, Roles.ADMIN]), OrderController.getAll)
 
+//show all user orders
+router.get('/ordered',authMiddleware,OrderController.getOrdered)
 // create order from common user
 router.post('', authMiddleware, OrderController.create)
 
