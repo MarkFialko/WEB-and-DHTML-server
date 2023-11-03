@@ -108,51 +108,51 @@ class UserService {
   }
 
   async logout(refreshToken: string) {
-    const token = await TokenService.removeToken(refreshToken)
-    return token
+    return await TokenService.removeToken(refreshToken)
   }
 
   async getMe(userId: string) {
-    const user: UserDocument | null = await UserSchema.findOne({
+    const user = (await UserSchema.findOne({
       _id: userId
-    })
+    })) as UserDocument
 
-    return new UserDto(user!)
+    return new UserDto(user)
   }
 
-  async setRoles(userId:string, role: string) {
-    const bdRole = await RolesSchema.findOne({
-        role: role
-    })
+  async setRoles(userId: string, role: string) {
+    const bdRole = (await RolesSchema.findOne({
+      role: role
+    })) as RoleDocument
 
-    const user = await UserSchema.findOne({
+    const user = (await UserSchema.findOne({
       _id: userId
-    })
-    user!.roles.push(bdRole!.role)
+    })) as UserDocument
 
-    await user!.save()
+    user.roles.push(bdRole.role)
 
+    await user.save()
 
     return true
   }
 
-  async deleteRole(userId:string, role: string) {
-    const user = await UserSchema.findOne({
+  async deleteRole(userId: string, role: string) {
+    const user = (await UserSchema.findOne({
       _id: userId
-    })
-    user!.roles = user!.roles.filter(r => role !== r)
+    })) as UserDocument
 
-    await user!.save()
+    user.roles = user.roles.filter((r) => role !== r)
 
+    await user.save()
 
     return true
   }
 
   async getUsers(adminId: string) {
-    const users = await UserSchema.find({
+    const users = (await UserSchema.find({
       _id: { $ne: adminId }
-    })
-    return users.map(user=> new UserDto(user))
+    })) as UserDocument[]
+
+    return users.map((user) => new UserDto(user))
   }
 }
 
