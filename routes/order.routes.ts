@@ -7,18 +7,29 @@ import { Roles } from '../models/Role.schema'
 // @ts-ignore
 const router = new Router()
 
-// show all orders to admin and waiters
+// get all orders to admin and waiters
 router.get('', authMiddleware, roleMiddleware([Roles.WAITER, Roles.ADMIN]), OrderController.getAll)
 
-//show all user orders
-router.get('/ordered',authMiddleware,OrderController.getOrdered)
+// get all user orders
+router.get('/me', authMiddleware, OrderController.getUserOrders)
+
 // create order from common user
 router.post('', authMiddleware, OrderController.create)
 
 // complete order for waiter
-router.patch('', authMiddleware,roleMiddleware([Roles.WAITER,Roles.ADMIN]), OrderController.update)
+router.patch(
+  '',
+  authMiddleware,
+  roleMiddleware([Roles.WAITER, Roles.ADMIN]),
+  OrderController.update
+)
 
-// check waiter completed order
-router.get('/me', authMiddleware,roleMiddleware([Roles.WAITER,Roles.ADMIN]), OrderController.getOrdersByUser)
+// completed orders for waiter
+router.get(
+  '/completed',
+  authMiddleware,
+  roleMiddleware([Roles.WAITER, Roles.ADMIN]),
+  OrderController.getCompletedOrders
+)
 
 export default router

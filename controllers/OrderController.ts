@@ -32,18 +32,18 @@ class BasketController {
     res.json(updatedOrder)
   }
 
-  async getOrdersByUser(req: UserRequest, res: Response, next: NextFunction) {
+  async getUserOrders(req: UserRequest, res: Response, next: NextFunction) {
     const userId = req.user.id
 
-    const orders = await OrderService.getOrdersByUser(userId as unknown as string)
+    const orders = await OrderService.getUserOrders(userId as unknown as string)
 
     res.json(orders)
   }
 
-  async getOrdered(req: UserRequest, res: Response, next: NextFunction) {
+  async getCompletedOrders(req: UserRequest, res: Response, next: NextFunction) {
     const userId = req.user.id
 
-    const orders = await OrderService.getOrdered(userId as unknown as string)
+    const orders = await OrderService.getCompletedOrders(userId as unknown as string)
 
     res.json(orders)
   }

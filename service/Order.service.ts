@@ -1,137 +1,139 @@
-import BasketSchema, { IBasket } from '../models/Basket.schema'
 import OrderSchema, { IOrder, OrderDocument, OrderStatus } from '../models/Order.schema'
-import UserOrderSchema from '../models/UserOrder.schema'
-import { Document, HydratedDocument } from 'mongoose'
+import { HydratedDocument } from 'mongoose'
 import BasketService from './Basket.service'
-import DishSchema, { DishDocument } from '../models/Dish.schema'
-import { DishDTO } from '../dtos/Dish.dto'
-import { OrderDto } from '../dtos/Order.dto'
+import OrderDishSchema from '../models/OrderDish.schema'
 import BasketDishSchema from '../models/BasketDish.schema'
+import UserOrderSchema from '../models/UserOrder.schema'
+import BasketSchema, { BasketDocument } from '../models/Basket.schema'
 
 class OrderService {
   async getAll() {
-    const orders: OrderDocument[] = await OrderSchema.find({})
+    const orders = await OrderSchema.find({})
 
-    const ordersDtos = await Promise.all(
-      orders.map(async (order: OrderDocument) => {
-        const dishesDTO = await Promise.all(
-          order.dishes.map(async (dishId) => {
-            const dish = await DishSchema.findOne({
-              _id: dishId
-            })
+    const resultOrders = [] as any[]
 
-            return new DishDTO(dish as DishDocument)
+    await Promise.all(
+      orders.map(async (order) => {
+        const fullOrder = {
+          order: order._id,
+          basket: order.basket,
+          dishes: [],
+          status: order.status
+        } as any
+        const orderDishes = await OrderDishSchema.find({
+          order: order._id
+        })
+
+        await Promise.all(
+          orderDishes.map(async (orderDish) => {
+            fullOrder.dishes.push(await orderDish.populate('dish'))
           })
         )
 
-        return new OrderDto(order, dishesDTO)
+        resultOrders.push(fullOrder)
       })
     )
 
-    return ordersDtos
+    return resultOrders
   }
 
   async create(userId: string) {
-    const userBasket: Document<IBasket> | null = await BasketSchema.findOne({
-      user: userId
+    const basketDishes = await BasketService.getAll(userId)
+
+    const order: HydratedDocument<IOrder> = new OrderSchema({
+      basket: basketDishes.basket,
+      status: OrderStatus.PENDING
     })
 
-    const dishes = (await BasketService.getAll(userId)) as any
+    await order.save()
 
-    if (userBasket) {
-      const order = new OrderSchema({
-        basket: userBasket._id,
-        dishes: Object.keys(dishes)!.map((key: any) => {
-          return dishes[key].id
-        }),
-        status: OrderStatus.PENDING
+    await OrderDishSchema.insertMany(
+      basketDishes.dishes.map((basketDish) => {
+        return {
+          order: order._id,
+          basket: basketDishes.basket,
+          dish: basketDish.dish.id,
+          count: basketDish.count
+        }
       })
+    )
 
-      await order.save()
+    await BasketDishSchema.updateMany(
+      {
+        basket: basketDishes.basket
+      },
+      {
+        $set: {
+          status: OrderStatus.SUCCESS
+        }
+      }
+    )
 
-      const dishesDTO = await Promise.all(
-        order.dishes.map(async (dishId) => {
-          const dish = await DishSchema.findOne({
-            _id: dishId
-          })
-
-          return new DishDTO(dish as DishDocument)
-        })
-      )
-
-      await BasketDishSchema.deleteMany({
-        basket: userBasket._id
-      })
-
-      console.log('удалена корзина пользователя')
-
-      return new OrderDto(order, dishesDTO)
+    return {
+      id: order._id,
+      status: order.status,
+      dishes: basketDishes.dishes
     }
   }
 
   async update(userId: string, orderId: string) {
-    const order: HydratedDocument<IOrder> | null = await OrderSchema.findById(orderId)
-    console.log('find order', order)
-    if (order) {
-      order.status = OrderStatus.SUCCESS
+    const order = (await OrderSchema.findOne({
+      _id: orderId
+    })) as OrderDocument
 
-      await order.save()
+    const completedUserOrder = new UserOrderSchema({
+      user: userId,
+      order: orderId
+    })
 
-      const userOrder = new UserOrderSchema({
-        user: userId,
-        order: order._id
-      })
+    await completedUserOrder.save()
 
-      await userOrder.save()
+    order.status = OrderStatus.SUCCESS
 
-      return userOrder
+    await order.save()
+
+    return {
+      // true
     }
   }
 
-  async getOrdersByUser(userId: string) {
-    const ordersInUsers = await UserOrderSchema.find({
+  async getUserOrders(userId: string) {
+    const userBasket = (await BasketSchema.findOne({
       user: userId
+    })) as BasketDocument
+
+    const orders = await OrderSchema.find({
+      basket: userBasket._id
     })
-    const orders = await Promise.all(
-      ordersInUsers.map(async (order) => {
-        const normalOrder = await OrderSchema.find({ _id: order.order })
-        return normalOrder
-      })
-    )
 
-    const ordersDtos = await Promise.all(
-      orders.flat(10).map(async (order: OrderDocument) => {
-        const dishesDTO = await Promise.all(
-          order.dishes.map(async (dishId) => {
-            const dish = await DishSchema.findOne({
-              _id: dishId
-            })
+    const resultOrders = [] as any[]
 
-            return new DishDTO(dish as DishDocument)
+    await Promise.all(
+      orders.map(async (order) => {
+        const fullOrder = {
+          order: order._id,
+          basket: order.basket,
+          dishes: [],
+          status: order.status
+        } as any
+        const orderDishes = await OrderDishSchema.find({
+          order: order._id
+        })
+
+        await Promise.all(
+          orderDishes.map(async (orderDish) => {
+            fullOrder.dishes.push(await orderDish.populate('dish'))
           })
         )
 
-        return new OrderDto(order, dishesDTO)
+        resultOrders.push(fullOrder)
       })
     )
 
-    return ordersDtos
+    return resultOrders
   }
 
-  async getOrdered(userId:string) {
-    const basket = await BasketSchema.findOne({
-      user: userId
-    })
-
-    console.log(basket,'basketId')
-
-    const userOrders = await OrderSchema.find({
-      basket: basket._id
-    })
-
-    return userOrders
-  }
-
+  async getCompletedOrders(userId: string) {}
 }
 
 export default new OrderService()
