@@ -7,7 +7,8 @@ import { Types } from 'mongoose'
 
 export interface BasketResponse {
   basket: Types.ObjectId
-  dishes: BasketDishDto[]
+  dishes: BasketDishDto[],
+  price: number
 }
 
 class BasketService {
@@ -27,6 +28,8 @@ class BasketService {
 
     const resultDishes: DishDTO[] = []
 
+    let basketPrice = 0
+
     notOrderedBasketDishes.map((basketDish) => {
       const dishDto = new DishDTO(basketDish.dish)
 
@@ -38,6 +41,8 @@ class BasketService {
       } else {
         basketDishesCount.set(dishDto.id, dishDtoCount + 1)
       }
+
+      basketPrice += basketDish.dish.price
     })
 
     return {
@@ -47,7 +52,8 @@ class BasketService {
           dish,
           count: basketDishesCount.get(dish.id) as number
         }
-      })
+      }),
+      price: basketPrice
     }
   }
 
